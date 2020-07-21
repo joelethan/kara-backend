@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import express from 'express';
 import jwt from "jsonwebtoken";
 import dotenv from 'dotenv';
+import { autoPassword } from '../../validation/autoGenPass';
 const passport = require('passport')
 
 dotenv.config();
@@ -93,5 +94,67 @@ router.get('/current', passport.authenticate('jwt', { session: false }), (req, r
         date: req.user.date
     });
 });
+
+// Protected route, Adding a Client
+router.post('/client', passport.authenticate('jwt', { session: false }), (req, res) => {
+    if (req.user.role == !'admin') return res.json({msg: 'Not admin'})
+    let role =  'client';
+
+    User.findOne({email: req.body.email})
+        .then(user =>{
+            if(user) return res.status(400).json({email: "Email already exists"});
+            
+        const newUser = new User({
+            name: req.body.name,
+            email: req.body.email,
+            address: req.body.address,
+            gender: req.body.gender,
+            role,
+            contact: req.body.contact,
+            password: autoPassword
+        });
+    
+        bcrypt.genSalt(10, (err, salt)=>{
+            bcrypt.hash(newUser.password, salt, (err, hash) => {
+                if(err) throw err;
+                newUser.password = hash;
+                newUser.save()
+                    .then(user => res.json(user))
+                    .catch(err => console.log(err))
+                });
+            });
+        });
+    })
+
+    // Protected route, Adding a Supplier
+    router.post('/supplier', passport.authenticate('jwt', { session: false }), (req, res) => {
+        if (req.user.role == !'admin') return res.json({msg: 'Not admin'})
+        let role =  'supplier';
+        
+        User.findOne({email: req.body.email})
+            .then(user =>{
+                if(user) return res.status(400).json({email: "Email already exists"});
+                
+            const newUser = new User({
+                name: req.body.name,
+                email: req.body.email,
+                address: req.body.address,
+                gender: req.body.gender,
+                role,
+                contact: req.body.contact,
+                password: autoPassword
+            });
+            
+            bcrypt.genSalt(10, (err, salt)=>{
+                bcrypt.hash(newUser.password, salt, (err, hash) => {
+                    if(err) throw err;
+                    newUser.password = hash;
+                    newUser.save()
+                        .then(user => res.json(user))
+                        .catch(err => console.log(err))
+                    });
+                });
+            });
+        })
 
 module.exports = router;

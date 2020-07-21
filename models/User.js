@@ -26,6 +26,9 @@ const userSchema = new Schema({
     nextOfKin: {
         type: String,
     },
+    gender: {
+        type: String,
+    },
     contact: {
         type: String,
         required: true
