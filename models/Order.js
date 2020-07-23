@@ -9,7 +9,7 @@ const clientSchema = new Schema({
     },
     measurement: {
         type: Schema.Types.ObjectId,
-        ref: 'mesurement',
+        ref: 'measurement',
     },
     orderDetails: [
         {
@@ -17,12 +17,12 @@ const clientSchema = new Schema({
                 type: String,
                 required: true
             },
-            quantity: {
-                type: Number,
-                required: true
-            },
             assignedTailor: {
                 type: String,
+                required: true
+            },
+            quantity: {
+                type: Number,
                 required: true
             },
             unitCost: {

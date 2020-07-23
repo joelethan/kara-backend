@@ -4,8 +4,8 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 
 const users = require('./routes/api/users');
-const profiles = require('./routes/api/profiles');
-const posts = require('./routes/api/posts');
+const supply = require('./routes/api/supply');
+const measurement = require('./routes/api/measurement');
 
 const app = express();
 
@@ -18,8 +18,8 @@ const db =require('./config/keys').mongoURI;
 
 // Use routes
 app.use('/api/user', users);
-app.use('/api/profiles', profiles);
-app.use('/api/posts', posts);
+app.use('/api/supply', supply);
+app.use('/api/measurement', measurement);
 
 // connect to DB
 mongoose
