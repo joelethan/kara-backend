@@ -3,6 +3,7 @@ import express from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { autoPassword } from "../../validation/autoGenPass";
+const Measurement = require("../../models/Measurement");
 const passport = require("passport");
 
 dotenv.config();
@@ -137,16 +138,64 @@ router.get("/user/:id" ,passport.authenticate("jwt", { session: false }), (req, 
   if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
   User.findById(req.params.id)
     .then(user=>{
-      res.json({
-        id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        address: user.address,
-        role: user.role,
-        contact: user.contact,
-        date: user.date,
-      });
+      Measurement.findOne({clientName: req.params.id})
+        .then(item => {
+          console.log(item);
+          let output = {
+            id: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            email: user.email,
+            address: user.address,
+            role: user.role,
+            contact: user.contact,
+            date: user.date
+          }
+          if (item) {
+            output = {
+              ...output,
+              top: {
+                shoulder: item.shoulder,
+                upperBust: item.upperBust,
+                shoulder: item.shoulder,
+                upperBust: item.upperBust,
+                bust: item.bust,
+                lowerBust: item.lowerBust,
+                waist: item.waist,
+                lowerWaist: item.lowerWaist,
+                hips: item.hips,
+                shoulderToUpperBust: item.shoulderToUpperBust,
+                shoulderToBust: item.shoulderToBust,
+                shoulderToLowerBust: item.shoulderToLowerBust,
+                shoulderToWaist: item.shoulderToWaist,
+                shoulderToLowerWaist: item.shoulderToLowerWaist,
+                shoulderToHips: item.shoulderToHips,
+              },
+              sleeves: {
+                shortSleeve: item.shortSleeve,
+                threeQuarterSleeve: item.threeQuarterSleeve,
+                fullLengthSleeve: item.fullLengthSleeve,
+                circumferenceSleeve: item.circumferenceSleeve
+              },
+              dress: {
+                shortDressFull: item.shortDressFull,
+                longDressFull: item.longDressFull,
+                circumferenceDress: item.circumferenceDress,
+              },
+              skirt: {
+                shortSkirtFull: item.shortSkirtFull,
+                longSkirtFull: item.longSkirtFull
+              },
+              trouser:{
+                trouserThigh: item.trouserThigh,
+                trouserFly: item.trouserFly,
+                trouserLength: item.trouserLength,
+                trouserBottomWidth: item.trouserBottomWidth
+              }
+            }
+          }
+          return res.json(output);
+        })
     })
     .catch(()=> {
         res.json({msg: 'User not found'})
