@@ -133,8 +133,8 @@ router.post("/client", passport.authenticate("jwt", { session: false }), (req, r
   }
 );
 
-// Protected route, Getting a User
-router.get("/user/:id" ,passport.authenticate("jwt", { session: false }), (req, res) => {
+// Protected route, Getting a Client
+router.get("/client/:id", passport.authenticate("jwt", { session: false }), (req, res) => {
   if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
   User.findById(req.params.id)
     .then(user=>{
