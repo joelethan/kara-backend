@@ -28,7 +28,8 @@ router.post("/register", (req, res) => {
     if (user) return res.status(400).json({ email: "Email already exists" });
 
     const newUser = new User({
-      name: req.body.name,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
       email: req.body.email,
       address: req.body.address,
       role: req.body.role,
@@ -63,7 +64,7 @@ router.post("/login", (req, res) => {
         // jwt payload
         const payload = {
           id: user.id,
-          name: user.name,
+          email: user.email,
         };
         // Generate token
         jwt.sign(
@@ -85,13 +86,10 @@ router.post("/login", (req, res) => {
 });
 
 // Protected route
-router.get(
-  "/current",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
+router.get("/current" ,passport.authenticate("jwt", { session: false }), (req, res) => {
     res.json({
-      id: req.user.id,
-      name: req.user.name,
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
       email: req.user.email,
       address: req.user.address,
       role: req.user.role,
@@ -102,10 +100,7 @@ router.get(
 );
 
 // Protected route, Adding a Client
-router.post(
-  "/client",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
+router.post("/client", passport.authenticate("jwt", { session: false }), (req, res) => {
     if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
     let role = "client";
 
@@ -113,7 +108,8 @@ router.post(
       if (user) return res.status(400).json({ email: "Email already exists" });
 
       const newUser = new User({
-        name: req.body.name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         address: req.body.address,
         gender: req.body.gender,
@@ -136,11 +132,29 @@ router.post(
   }
 );
 
+// Protected route, Getting a User
+router.get("/user/:id" ,passport.authenticate("jwt", { session: false }), (req, res) => {
+  if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+  User.findById(req.params.id)
+    .then(user=>{
+      res.json({
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        address: user.address,
+        role: user.role,
+        contact: user.contact,
+        date: user.date,
+      });
+    })
+    .catch(()=> {
+        res.json({msg: 'User not found'})
+    })
+});
+
 // Protected route, Adding a Supplier
-router.post(
-  "/supplier",
-  passport.authenticate("jwt", { session: false }),
-  (req, res) => {
+router.post("/supplier", passport.authenticate("jwt", { session: false }), (req, res) => {
     if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
     let role = "supplier";
 
@@ -148,7 +162,8 @@ router.post(
       if (user) return res.status(400).json({ email: "Email already exists" });
 
       const newUser = new User({
-        name: req.body.name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         address: req.body.address,
         gender: req.body.gender,
