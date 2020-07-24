@@ -12,6 +12,7 @@ const router = express.Router();
 
 // Load Input validations
 const validateRegisterInput = require("../../validation/register");
+const validateLoginInput = require("../../validation/login");
 
 const User = require("../../models/User");
 
@@ -51,7 +52,15 @@ router.post("/register", (req, res) => {
   });
 });
 
+//logging in a user
+
 router.post("/login", (req, res) => {
+  const { errors, isValid } = validateLoginInput(req.body);
+
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
+
   const email = req.body.email;
   const password = req.body.password;
 
@@ -87,7 +96,10 @@ router.post("/login", (req, res) => {
 });
 
 // Protected route
-router.get("/current" ,passport.authenticate("jwt", { session: false }), (req, res) => {
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
     res.json({
       firstName: req.user.firstName,
       lastName: req.user.lastName,
@@ -101,7 +113,10 @@ router.get("/current" ,passport.authenticate("jwt", { session: false }), (req, r
 );
 
 // Protected route, Adding a Client
-router.post("/client", passport.authenticate("jwt", { session: false }), (req, res) => {
+router.post(
+  "/client",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
     if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
     let role = "client";
 
@@ -134,12 +149,14 @@ router.post("/client", passport.authenticate("jwt", { session: false }), (req, r
 );
 
 // Protected route, Getting a User
-router.get("/user/:id" ,passport.authenticate("jwt", { session: false }), (req, res) => {
-  if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
-  User.findById(req.params.id)
-    .then(user=>{
-      Measurement.findOne({clientName: req.params.id})
-        .then(item => {
+router.get(
+  "/user/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    User.findById(req.params.id)
+      .then((user) => {
+        Measurement.findOne({ clientName: req.params.id }).then((item) => {
           console.log(item);
           let output = {
             id: user.id,
@@ -149,8 +166,8 @@ router.get("/user/:id" ,passport.authenticate("jwt", { session: false }), (req, 
             address: user.address,
             role: user.role,
             contact: user.contact,
-            date: user.date
-          }
+            date: user.date,
+          };
           if (item) {
             output = {
               ...output,
@@ -175,7 +192,7 @@ router.get("/user/:id" ,passport.authenticate("jwt", { session: false }), (req, 
                 shortSleeve: item.shortSleeve,
                 threeQuarterSleeve: item.threeQuarterSleeve,
                 fullLengthSleeve: item.fullLengthSleeve,
-                circumferenceSleeve: item.circumferenceSleeve
+                circumferenceSleeve: item.circumferenceSleeve,
               },
               dress: {
                 shortDressFull: item.shortDressFull,
@@ -184,26 +201,30 @@ router.get("/user/:id" ,passport.authenticate("jwt", { session: false }), (req, 
               },
               skirt: {
                 shortSkirtFull: item.shortSkirtFull,
-                longSkirtFull: item.longSkirtFull
+                longSkirtFull: item.longSkirtFull,
               },
-              trouser:{
+              trouser: {
                 trouserThigh: item.trouserThigh,
                 trouserFly: item.trouserFly,
                 trouserLength: item.trouserLength,
-                trouserBottomWidth: item.trouserBottomWidth
-              }
-            }
+                trouserBottomWidth: item.trouserBottomWidth,
+              },
+            };
           }
           return res.json(output);
-        })
-    })
-    .catch(()=> {
-        res.json({msg: 'User not found'})
-    })
-});
+        });
+      })
+      .catch(() => {
+        res.json({ msg: "User not found" });
+      });
+  }
+);
 
 // Protected route, Adding a Supplier
-router.post("/supplier", passport.authenticate("jwt", { session: false }), (req, res) => {
+router.post(
+  "/supplier",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
     if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
     let role = "supplier";
 
