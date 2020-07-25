@@ -27,6 +27,10 @@ const supplySchema = new Schema({
         type: String,
         required: true
     },
+    isDeleted: {
+        type: String,
+        required: false
+    },
     date: {
         type: Date,
         default: Date.now

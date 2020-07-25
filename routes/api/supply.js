@@ -6,12 +6,11 @@ const Supply = require("../../models/Supply");
 
 router.get('/', (req, res) => res.json({msg: "Supplies works"}));
 
-// Protected route, Adding measurements to a User
+// Protected route, Adding Supply
 router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res) => {
     if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
     Supply.findOne({nameOfSupplier: req.params.id})
-        .then(item => {
-            if (item) return res.json({msg: 'User already has supply'})
+        .then(() => {
             User.findById(req.params.id)
                 .then(() => {
                     const supply = new Supply({

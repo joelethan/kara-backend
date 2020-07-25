@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { autoPassword } from "../../validation/autoGenPass";
 const Measurement = require("../../models/Measurement");
+const Supply = require("../../models/Supply");
 const passport = require("passport");
 
 dotenv.config();
@@ -234,5 +235,20 @@ router.post("/supplier", passport.authenticate("jwt", { session: false }), (req,
     });
   }
 );
+
+// Protected route, Getting a Supplier
+router.get("/supplier/:id",  passport.authenticate("jwt", { session: false }), (req, res) => {
+  // if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+  User.findById(req.params.id)
+    .then(user=>{
+      Supply.find({nameOfSupplier: req.params.id})
+        .then(supply => {
+          res.json({ user, supply })
+        })
+      })
+    .catch(()=>{
+      res.json({msg: 'User not found'})
+    })
+});
 
 module.exports = router;

@@ -1,5 +1,4 @@
 import express from 'express';
-import { json } from 'body-parser';
 const router = express.Router();
 const passport = require("passport");
 const User = require("../../models/User");
