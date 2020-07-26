@@ -13,7 +13,8 @@ const router = express.Router();
 
 // Load Input validations
 const validateRegisterInput = require("../../validation/register");
-
+const validateClientInput = require("../../validation/client");
+const validateSupplierInput = require("../../validation/supplier");
 const User = require("../../models/User");
 
 router.get("/", (req, res) => res.json({ msg: "Users works" }));
@@ -102,7 +103,13 @@ router.get("/current" ,passport.authenticate("jwt", { session: false }), (req, r
 );
 
 // Protected route, Adding a Client
-router.post("/client", passport.authenticate("jwt", { session: false }), (req, res) => {
+router.post("/client", passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateClientInput(req.body);
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
+
     if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
     let role = "client";
 
@@ -135,12 +142,14 @@ router.post("/client", passport.authenticate("jwt", { session: false }), (req, r
 );
 
 // Protected route, Getting a Client
-router.get("/client/:id", passport.authenticate("jwt", { session: false }), (req, res) => {
-  if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
-  User.findById(req.params.id)
-    .then(user=>{
-      Measurement.findOne({clientName: req.params.id})
-        .then(item => {
+router.get(
+  "/client/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    User.findById(req.params.id)
+      .then((user) => {
+        Measurement.findOne({ clientName: req.params.id }).then((item) => {
           console.log(item);
           let output = {
             id: user.id,
@@ -150,8 +159,8 @@ router.get("/client/:id", passport.authenticate("jwt", { session: false }), (req
             address: user.address,
             role: user.role,
             contact: user.contact,
-            date: user.date
-          }
+            date: user.date,
+          };
           if (item) {
             output = {
               ...output,
@@ -176,7 +185,7 @@ router.get("/client/:id", passport.authenticate("jwt", { session: false }), (req
                 shortSleeve: item.shortSleeve,
                 threeQuarterSleeve: item.threeQuarterSleeve,
                 fullLengthSleeve: item.fullLengthSleeve,
-                circumferenceSleeve: item.circumferenceSleeve
+                circumferenceSleeve: item.circumferenceSleeve,
               },
               dress: {
                 shortDressFull: item.shortDressFull,
@@ -185,26 +194,34 @@ router.get("/client/:id", passport.authenticate("jwt", { session: false }), (req
               },
               skirt: {
                 shortSkirtFull: item.shortSkirtFull,
-                longSkirtFull: item.longSkirtFull
+                longSkirtFull: item.longSkirtFull,
               },
-              trouser:{
+              trouser: {
                 trouserThigh: item.trouserThigh,
                 trouserFly: item.trouserFly,
                 trouserLength: item.trouserLength,
-                trouserBottomWidth: item.trouserBottomWidth
-              }
-            }
+                trouserBottomWidth: item.trouserBottomWidth,
+              },
+            };
           }
           return res.json(output);
-        })
-    })
-    .catch(()=> {
-        res.json({msg: 'User not found'})
-    })
-});
+        });
+      })
+      .catch(() => {
+        res.json({ msg: "User not found" });
+      });
+  }
+);
 
 // Protected route, Adding a Supplier
-router.post("/supplier", passport.authenticate("jwt", { session: false }), (req, res) => {
+router.post(
+  "/supplier",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateSupplierInput(req.body);
+    if (!isValid) {
+      return res.status(400).json(errors);
+    }
     if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
     let role = "supplier";
 
@@ -237,18 +254,21 @@ router.post("/supplier", passport.authenticate("jwt", { session: false }), (req,
 );
 
 // Protected route, Getting a Supplier
-router.get("/supplier/:id",  passport.authenticate("jwt", { session: false }), (req, res) => {
-  // if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
-  User.findById(req.params.id)
-    .then(user=>{
-      Supply.find({nameOfSupplier: req.params.id})
-        .then(supply => {
-          res.json({ user, supply })
-        })
+router.get(
+  "/supplier/:id",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    // if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    User.findById(req.params.id)
+      .then((user) => {
+        Supply.find({ nameOfSupplier: req.params.id }).then((supply) => {
+          res.json({ user, supply });
+        });
       })
-    .catch(()=>{
-      res.json({msg: 'User not found'})
-    })
-});
+      .catch(() => {
+        res.json({ msg: "User not found" });
+      });
+  }
+);
 
 module.exports = router;
