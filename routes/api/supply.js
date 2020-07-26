@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 const User = require("../../models/User");
 const Supply = require("../../models/Supply");
+const Inventory = require("../../models/Inventory");
 
 router.get('/', (req, res) => res.json({msg: "Supplies works"}));
 
@@ -23,6 +24,20 @@ router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res)
                     })
                     supply.save()
                         .then(()=>{
+                            // Update Inventory
+                            Inventory.findOne({itemName: req.body.itemName})
+                                .then(item=>{
+                                    if (!item) {
+                                        const inventory = new Inventory({
+                                            itemName: req.body.itemName,
+                                            quantity: req.body.quantity
+                                        })
+                                        inventory.save()
+                                    } else {
+                                        item.quantity = item.quantity + req.body.quantity
+                                        item.save()
+                                    }
+                                })
                             res.json({msg: 'Supply added'})
                         })
                 })

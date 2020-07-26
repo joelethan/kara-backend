@@ -9,7 +9,7 @@ const clientSchema = new Schema({
         required: true
     },
     quantity: {
-        type: String,
+        type: Number,
         required: true
     },
     date: {
@@ -18,4 +18,4 @@ const clientSchema = new Schema({
     }
 })
 
-module.exports = mongoose.model('order', clientSchema)
+module.exports = mongoose.model('inventory', clientSchema)
