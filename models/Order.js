@@ -7,17 +7,17 @@ const clientSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'user',
     },
-    measurement: {
-        type: Schema.Types.ObjectId,
-        ref: 'measurement',
+    assignedTailor: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: String,
+        default: 'pending'
     },
     orderDetails: [
         {
             item: {
-                type: String,
-                required: true
-            },
-            assignedTailor: {
                 type: String,
                 required: true
             },

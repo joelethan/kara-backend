@@ -2,12 +2,16 @@ import express from 'express';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import passport from 'passport';
+import cors from 'cors';
 
 const users = require('./routes/api/users');
 const supply = require('./routes/api/supply');
+const order = require('./routes/api/order');
 const measurement = require('./routes/api/measurement');
 
 const app = express();
+
+app.use(cors());
 
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
@@ -19,6 +23,7 @@ const db =require('./config/keys').mongoURI;
 // Use routes
 app.use('/api/user', users);
 app.use('/api/supply', supply);
+app.use('/api/order', order);
 app.use('/api/measurement', measurement);
 
 // connect to DB

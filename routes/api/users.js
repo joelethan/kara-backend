@@ -103,18 +103,17 @@ router.get("/current" ,passport.authenticate("jwt", { session: false }), (req, r
 );
 
 // Protected route, Adding a Client
-router.post("/client", passport.authenticate("jwt", { session: false }),
-  (req, res) => {
+router.post("/client", passport.authenticate("jwt", { session: false }), (req, res) => {
+    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
     const { errors, isValid } = validateClientInput(req.body);
     if (!isValid) {
       return res.status(400).json(errors);
     }
 
-    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
     let role = "client";
 
     User.findOne({ email: req.body.email }).then((user) => {
-      if (user) return res.status(400).json({ email: "Email already exists" });
+      if (user) return res.status(400).json({ msg: "Email already exists" });
 
       const newUser = new User({
         firstName: req.body.firstName,
@@ -146,11 +145,11 @@ router.get(
   "/client/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
     User.findById(req.params.id)
       .then((user) => {
         Measurement.findOne({ clientName: req.params.id }).then((item) => {
-          console.log(item);
+
           let output = {
             id: user.id,
             firstName: user.firstName,
@@ -222,7 +221,7 @@ router.post(
     if (!isValid) {
       return res.status(400).json(errors);
     }
-    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
     let role = "supplier";
 
     User.findOne({ email: req.body.email }).then((user) => {
@@ -258,12 +257,25 @@ router.get(
   "/supplier/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    // if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
     User.findById(req.params.id)
       .then((user) => {
         Supply.find({ nameOfSupplier: req.params.id }).then((supply) => {
           res.json({ user, supply });
         });
+      })
+      .catch(() => {
+        res.json({ msg: "User not found" });
+      });
+  }
+);
+
+// Protected route, Getting all Users
+router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) => {
+    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
+    User.find()
+      .then((users) => {
+        res.json(users);
       })
       .catch(() => {
         res.json({ msg: "User not found" });
