@@ -59,4 +59,15 @@ router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res)
     })
 })
 
+// Protected route, Getting all User measurements
+router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) => {
+    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    Measurement.find()
+        .then(item => {
+            if (item) return res.json(item)})
+        .catch(()=> {
+            res.json({msg: 'Not found'})
+        })
+})
+
 module.exports = router;

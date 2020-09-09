@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 // Create Schema
 const clientSchema = new Schema({
     clientName: {
-        type: Schema.Types.ObjectId,
-        ref: 'user',
+        type: String,
+        required: true
     },
     assignedTailor: {
         type: String,

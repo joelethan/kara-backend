@@ -36,8 +36,14 @@ router.post("/register", (req, res) => {
       email: req.body.email,
       address: req.body.address,
       role: req.body.role,
+      gender: req.body.gender,
+      active: req.body.active,
       contact: req.body.contact,
       password: req.body.password,
+      nextOfKinName: req.body.nextOfKinName,
+      nextOfKinContact: req.body.nextOfKinContact,
+      nextOfKinAddress: req.body.nextOfKinAddress,
+      nextOfKinRelation: req.body.nextOfKinRelation,
     });
 
     bcrypt.genSalt(10, (err, salt) => {
@@ -73,7 +79,7 @@ router.post("/login", (req, res) => {
         jwt.sign(
           payload,
           process.env.secret,
-          { expiresIn: 3600 },
+          { expiresIn: "1d" },
           (err, token) => {
             res.json({
               success: true,
@@ -147,7 +153,6 @@ router.get(
   (req, res) => {
     if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
     User.findById(req.params.id)
-      .then((user) => {
         Measurement.findOne({ clientName: req.params.id }).then((item) => {
 
           let output = {
