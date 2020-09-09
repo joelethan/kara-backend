@@ -153,6 +153,7 @@ router.get(
   (req, res) => {
     if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
     User.findById(req.params.id)
+      .then((user) => {
         Measurement.findOne({ clientName: req.params.id }).then((item) => {
 
           let output = {
