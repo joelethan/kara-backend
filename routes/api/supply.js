@@ -9,7 +9,7 @@ router.get('/', (req, res) => res.json({msg: "Supplies works"}));
 
 // Protected route, Adding Supply
 router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res) => {
-    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
     Supply.findOne({nameOfSupplier: req.params.id})
         .then(() => {
             User.findById(req.params.id)
@@ -49,7 +49,7 @@ router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res)
 
 // Protected route, Getting all User Suppliers
 router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) => {
-    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
     Supply.find()
         .then(item => {
             if (item) return res.json(item)})

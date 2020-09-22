@@ -10,54 +10,63 @@ router.get('/', (req, res) => res.json({msg: "Orders works"}));
 
 // Protected route, Adding Order
 router.post("/:userId", passport.authenticate("jwt", { session: false }), (req, res) => {
-    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
-    Order.findOne({clientName: req.params.userId})
-        .then(() => {
-            User.findById(req.params.userId)
-                .then(user => {
-                    if(!user) return res.json({msg: 'User not found'})
-                    const order = new Order({
-                        clientName: user.firstName + " " + user.lastName,
-                        assignedTailor: req.body.assignedTailor,
-                        itemName: req.body.itemName,
-                        quantity: req.body.quantity,
-                        unitPrice: req.body.unitPrice,
-                        paymentMethod: req.body.paymentMethod
-                    })
-                    order.save()
-                        .then(() => {
-                            // Update Inventory
-                            Inventory.findOne({itemName: req.body.itemName})
-                                .then(item=>{
-                                    if (!item) {
-                                        const inventory = new Inventory({
-                                            itemName: req.body.itemName,
-                                            quantity: req.body.quantity
-                                        })
-                                        inventory.save()
-                                    } else {
-                                        item.quantity = item.quantity + req.body.quantity
-                                        item.save()
-                                    }
-                                })
-                            res.json({msg: order})
-                        })
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
+        User.findOne({_id: req.params.userId})
+            .then(user => {
+                if(!user) return res.json({msg: 'User not found'})
+                const order = new Order({
+                    clientId: user._id,
+                    clientName: user.firstName + " " + user.lastName,
+                    assignedTailor: req.body.assignedTailor,
+                    orderDetails: req.body.orderDetails,
+                    orderDescription: req.body.orderDescription,
+                    orderDate: req.body.orderDate,
+                    dueDate: req.body.dueDate,
                 })
-        })
-        .catch(() => {
-            res.json({msg: 'User not found'})
-        })
+                order.save()
+                    .then(() => {
+                        // Update Inventory
+                        // Inventory.findOne({itemName: req.body.itemName})
+                        //     .then(item=>{
+                        //         if (!item) {
+                        //             const inventory = new Inventory({
+                        //                 itemName: req.body.itemName,
+                        //                 quantity: req.body.quantity
+                        //             })
+                        //             inventory.save()
+                        //         } else {
+                        //             item.quantity = item.quantity + req.body.quantity
+                        //             item.save()
+                        //         }
+                        //     })
+                        res.json({order})
+                    })
+            })
+            .catch(() => {
+                res.json({msg: 'User not found'})
+            })
 })
 
 // Protected route, Getting all User Orders
 router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) => {
-    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
     Order.find()
         .then(item => {
-            return res.json(item)})
+            return res.json(item.reverse())})
         .catch(()=> {
             res.json({msg: 'Not found'})
         })
+})
+
+// findOneAndUpdate()
+router.put("/:orderId", passport.authenticate("jwt", { session: false }), (req, res) => {
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
+    Order.findOneAndUpdate({_id: req.params.orderId}, req.body, {new: true}, (err, order) => {
+        if (err) {
+            return res.status(400).json({ msg: "An error has occured" })
+        }
+        return res.json(order)
+    })
 })
 
 module.exports = router;

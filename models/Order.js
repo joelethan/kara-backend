@@ -7,6 +7,10 @@ const clientSchema = new Schema({
         type: String,
         required: true
     },
+    clientId: {
+        type: String,
+        required: true
+    },
     assignedTailor: {
         type: String,
         required: true
@@ -15,25 +19,27 @@ const clientSchema = new Schema({
         type: String,
         default: 'pending'
     },
+    orderDescription: {
+        type: String
+    },
     orderDetails: [
         {
             item: {
                 type: String,
-                required: true
             },
             quantity: {
                 type: Number,
-                required: true
             },
             unitCost: {
                 type: Number,
-                required: true
             }
         }
     ],
-    date: {
+    orderDate: {
         type: Date,
-        default: Date.now
+    },
+    dueDate: {
+        type: Date,
     }
 })
 

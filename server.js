@@ -28,7 +28,7 @@ app.use('/api/measurement', measurement);
 
 // connect to DB
 mongoose
-    .connect(db,{ useUnifiedTopology: true },)
+    .connect(db,{ useUnifiedTopology: true, useFindAndModify: false },)
     .then(()=> console.log('Connected'))
     .catch(err => console.log(err))
 
