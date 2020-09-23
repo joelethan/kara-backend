@@ -1,5 +1,4 @@
 import express from 'express';
-import { json } from 'body-parser';
 const router = express.Router();
 const passport = require("passport");
 const User = require("../../models/User");
@@ -9,7 +8,7 @@ router.get('/', (req, res) => res.json({msg: "Measurement works"}));
 
 // Protected route, Adding measurements to a User
 router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res) => {
-    if (req.user.role == !"admin") return res.json({ msg: "Not admin" });
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
     Measurement.findOne({clientName: req.params.id})
         .then(item => {
             if (item) return res.json({msg: 'User already has measurements'})
@@ -31,11 +30,15 @@ router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res)
                         shoulderToWaist: req.body.shoulderToWaist,
                         shoulderToLowerWaist: req.body.shoulderToLowerWaist,
                         shoulderToHips: req.body.shoulderToHips,
+                        bodiceCut: req.body.bodiceCut,
+                        topFullLength: req.body.topFullLength,
+                        waistCut: req.body.waistCut,
 
                         shortSleeve: req.body.shortSleeve,
                         threeQuarterSleeve: req.body.threeQuarterSleeve,
                         fullLengthSleeve: req.body.fullLengthSleeve,
                         circumferenceSleeve: req.body.circumferenceSleeve,
+                        capSleeve: req.body.capSleeve,
 
                         shortDressFull: req.body.shortDressFull,
                         longDressFull: req.body.longDressFull,
@@ -43,11 +46,14 @@ router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res)
 
                         shortSkirtFull: req.body.shortSkirtFull,
                         longSkirtFull: req.body.longSkirtFull,
+                        skirtSlitLength: req.body.skirtSlitLength,
 
                         trouserThigh: req.body.trouserThigh,
                         trouserFly: req.body.trouserFly,
                         trouserLength: req.body.trouserLength,
-                        trouserBottomWidth: req.body.trouserBottomWidth
+                        trouserBottomWidth: req.body.trouserBottomWidth,
+                        trouserWaist: req.body.trouserWaist,
+                        trouserHips: req.body.trouserHips,
                     })
                     measurement.save()
                         .then(()=>{
@@ -58,6 +64,17 @@ router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res)
                     res.json({msg: 'User not found'})
         })
     })
+})
+
+// Protected route, Getting all User measurements
+router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) => {
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
+    Measurement.find()
+        .then(item => {
+            if (item) return res.json(item)})
+        .catch(()=> {
+            res.json({msg: 'Not found'})
+        })
 })
 
 module.exports = router;

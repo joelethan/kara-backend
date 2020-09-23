@@ -27,7 +27,20 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    nextOfKin: {
+    active: {
+        type: String,
+        default: true
+    },
+    nextOfKinName: {
+        type: String,
+    },
+    nextOfKinContact: {
+        type: String,
+    },
+    nextOfKinAddress: {
+        type: String,
+    },
+    nextOfKinRelation: {
         type: String,
     },
     gender: {

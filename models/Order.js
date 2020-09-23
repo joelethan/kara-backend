@@ -4,36 +4,42 @@ const Schema = mongoose.Schema;
 // Create Schema
 const clientSchema = new Schema({
     clientName: {
-        type: Schema.Types.ObjectId,
-        ref: 'user',
+        type: String,
+        required: true
     },
-    measurement: {
-        type: Schema.Types.ObjectId,
-        ref: 'measurement',
+    clientId: {
+        type: String,
+        required: true
+    },
+    assignedTailor: {
+        type: String,
+        required: true
+    },
+    status: {
+        type: String,
+        default: 'pending'
+    },
+    orderDescription: {
+        type: String
     },
     orderDetails: [
         {
             item: {
                 type: String,
-                required: true
-            },
-            assignedTailor: {
-                type: String,
-                required: true
             },
             quantity: {
                 type: Number,
-                required: true
             },
             unitCost: {
                 type: Number,
-                required: true
             }
         }
     ],
-    date: {
+    orderDate: {
         type: Date,
-        default: Date.now
+    },
+    dueDate: {
+        type: Date,
     }
 })
 

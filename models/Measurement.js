@@ -21,12 +21,16 @@ const clientSchema = new Schema({
     shoulderToWaist: {type: String},
     shoulderToLowerWaist: {type: String},
     shoulderToHips: {type: String},
+    bodiceCut: {type: String},
+    topFullLength: {type: String},
+    waistCut: {type: String},
 
     // Sleeves
     shortSleeve: {type: String},
     threeQuarterSleeve: {type: String},
     fullLengthSleeve: {type: String},
     circumferenceSleeve: {type: String},
+    capSleeve: {type: String},
 
     // Dress
     shortDressFull: {type: String},
@@ -36,12 +40,15 @@ const clientSchema = new Schema({
     // Skirt
     shortSkirtFull: {type: String},
     longSkirtFull: {type: String},
+    skirtSlitLength: {type: String},
 
     // Trouser
     trouserThigh: {type: String},
     trouserFly: {type: String},
     trouserLength: {type: String},
     trouserBottomWidth: {type: String},
+    trouserWaist: {type: String},
+    trouserHips: {type: String},
     date: {
         type: Date,
         default: Date.now
