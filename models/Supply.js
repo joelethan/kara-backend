@@ -29,7 +29,7 @@ const supplySchema = new Schema({
     },
     isDeleted: {
         type: String,
-        required: false
+        default: false
     },
     date: {
         type: Date,
