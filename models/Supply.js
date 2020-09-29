@@ -35,6 +35,10 @@ const supplySchema = new Schema({
         type: String,
         default: false
     },
+    status: {
+        type: String,
+        default: "pending"
+    },
     paymentMethod: {
         type: String,
     },
