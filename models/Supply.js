@@ -6,6 +6,15 @@ const supplySchema = new Schema({
     nameOfSupplier: {
         type: String,
     },
+    email: {
+        type: String,
+    },
+    address: {
+        type: String,
+    },
+    contact: {
+        type: String,
+    },
     supplyDetails: [
         {
             itemName: {
