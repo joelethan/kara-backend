@@ -10,6 +10,9 @@ router.post("/", passport.authenticate("jwt", { session: false }), (req, res) =>
     if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
     const supply = new Supply({
         nameOfSupplier: req.body.nameOfSupplier,
+        email: req.body.email,
+        contact: req.body.contact,
+        address: req.body.address,
         supplyDetails: req.body.supplyDetails,
         paymentMethod: req.body.paymentMethod
     })
