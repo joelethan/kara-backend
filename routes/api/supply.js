@@ -14,7 +14,8 @@ router.post("/", passport.authenticate("jwt", { session: false }), (req, res) =>
         contact: req.body.contact,
         address: req.body.address,
         supplyDetails: req.body.supplyDetails,
-        paymentMethod: req.body.paymentMethod
+        paymentMethod: req.body.paymentMethod,
+        date: req.body.date,
     })
     supply.save()
         .then(supply=>{
