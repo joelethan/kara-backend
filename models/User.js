@@ -28,7 +28,7 @@ const userSchema = new Schema({
         required: true
     },
     active: {
-        type: String,
+        type: Boolean,
         default: true
     },
     nextOfKinName: {

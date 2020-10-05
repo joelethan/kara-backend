@@ -289,4 +289,15 @@ router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) 
   }
 );
 
+// findOneAndUpdate()
+router.put("/:userId", passport.authenticate("jwt", { session: false }), (req, res) => {
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
+    User.findOneAndUpdate({_id: req.params.userId}, req.body, {new: true}, (err, user) => {
+        if (err) {
+            return res.status(400).json({ msg: "An error has occured" })
+        }
+        return res.json(user)
+    })
+})
+
 module.exports = router;
