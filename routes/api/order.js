@@ -47,6 +47,24 @@ router.post("/:userId", passport.authenticate("jwt", { session: false }), (req, 
             })
 })
 
+// Protected route, Adding Order
+router.put("/express", passport.authenticate("jwt", { session: false }), (req, res) => {
+    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
+    console.log('object', 'object')
+    const order = new Order({
+        clientName: req.body.clientName,
+        assignedTailor: req.body.assignedTailor,
+        orderDetails: req.body.orderDetails,
+        orderDescription: req.body.orderDescription,
+        orderDate: req.body.orderDate,
+        dueDate: req.body.dueDate,
+    })
+    order.save()
+        .then(() => {
+            res.json({order})
+        })
+})
+
 // Protected route, Getting all User Orders
 router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) => {
     if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });

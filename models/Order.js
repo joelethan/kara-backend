@@ -9,7 +9,6 @@ const clientSchema = new Schema({
     },
     clientId: {
         type: String,
-        required: true
     },
     assignedTailor: {
         type: String,
