@@ -25,20 +25,6 @@ router.post("/:userId", passport.authenticate("jwt", { session: false }), (req, 
                 })
                 order.save()
                     .then(() => {
-                        // Update Inventory
-                        // Inventory.findOne({itemName: req.body.itemName})
-                        //     .then(item=>{
-                        //         if (!item) {
-                        //             const inventory = new Inventory({
-                        //                 itemName: req.body.itemName,
-                        //                 quantity: req.body.quantity
-                        //             })
-                        //             inventory.save()
-                        //         } else {
-                        //             item.quantity = item.quantity + req.body.quantity
-                        //             item.save()
-                        //         }
-                        //     })
                         res.json({order})
                     })
             })
