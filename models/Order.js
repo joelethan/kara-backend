@@ -16,7 +16,7 @@ const clientSchema = new Schema({
     },
     status: {
         type: String,
-        default: 'pending'
+        default: 'Pending'
     },
     orderDescription: {
         type: String
