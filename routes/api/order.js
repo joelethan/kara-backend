@@ -44,6 +44,7 @@ router.put("/express", passport.authenticate("jwt", { session: false }), (req, r
         orderDescription: req.body.orderDescription,
         orderDate: req.body.orderDate,
         dueDate: req.body.dueDate,
+        status: "Completed",
     })
     order.save()
         .then(() => {
