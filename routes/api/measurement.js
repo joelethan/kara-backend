@@ -56,8 +56,8 @@ router.post("/:id", passport.authenticate("jwt", { session: false }), (req, res)
                         trouserHips: req.body.trouserHips,
                     })
                     measurement.save()
-                        .then(()=>{
-                            res.json({msg: 'Measurements added'})
+                        .then( data => {
+                            res.json({msg: 'Measurements added', data})
                         })
                 })
                 .catch(()=> {
