@@ -18,6 +18,10 @@ const clientSchema = new Schema({
         type: String,
         default: 'Pending'
     },
+    amountCleared: {
+        type: Number,
+        default: 0
+    },
     orderDescription: {
         type: String
     },

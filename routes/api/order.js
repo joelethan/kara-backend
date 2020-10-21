@@ -42,6 +42,7 @@ router.put("/express", passport.authenticate("jwt", { session: false }), (req, r
         assignedTailor: req.body.assignedTailor,
         orderDetails: req.body.orderDetails,
         orderDescription: req.body.orderDescription,
+        amountCleared: req.body.amountCleared,
         orderDate: req.body.orderDate,
         dueDate: req.body.dueDate,
         status: "Completed",
