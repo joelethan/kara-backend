@@ -19,6 +19,7 @@ app.use((req, res, next) => {
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
+app.use(cors()); // Allow All Requests
 
 // DB config
 const db =require('./config/keys').mongoURI;
