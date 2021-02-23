@@ -6,11 +6,11 @@ const Schema = mongoose.Schema;
 const clientSchema = new Schema({
     itemName: {
         type: String,
-        required: true
+        // required: true
     },
     quantity: {
         type: Number,
-        required: true
+        // required: true
     },
     date: {
         type: Date,

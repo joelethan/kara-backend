@@ -5,14 +5,14 @@ const Schema = mongoose.Schema;
 const clientSchema = new Schema({
     clientName: {
         type: String,
-        required: true
+        // required: true
     },
     clientId: {
         type: String,
     },
     assignedTailor: {
         type: String,
-        required: true
+        // required: true
     },
     status: {
         type: String,

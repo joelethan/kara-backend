@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
 import express from "express";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
 import { autoPassword } from "../../validation/autoGenPass";
 const Measurement = require("../../models/Measurement");
 const Supply = require("../../models/Supply");
@@ -95,7 +95,10 @@ router.post("/login", (req, res) => {
 });
 
 // Protected route
-router.get("/current" ,passport.authenticate("jwt", { session: false }), (req, res) => {
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
     res.json({
       firstName: req.user.firstName,
       lastName: req.user.lastName,
@@ -109,17 +112,21 @@ router.get("/current" ,passport.authenticate("jwt", { session: false }), (req, r
 );
 
 // Protected route, Adding a Client
-router.post("/client", passport.authenticate("jwt", { session: false }), (req, res) => {
-    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
-    const { errors, isValid } = validateClientInput(req.body);
-    if (!isValid) {
-      return res.status(400).json(errors);
-    }
+router.post(
+  "/client",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    if (req.user.role !== "admin")
+      return res.status(400).json({ msg: "Not admin" });
+    // const { errors, isValid } = validateClientInput(req.body);
+    // if (!isValid) {
+    //   return res.status(400).json(errors);
+    // }
 
     let role = "client";
 
     User.findOne({ email: req.body.email }).then((user) => {
-      if (user) return res.status(400).json({ msg: "Email already exists" });
+      // if (user) return res.status(400).json({ msg: "Email already exists" });
 
       const newUser = new User({
         firstName: req.body.firstName,
@@ -151,11 +158,11 @@ router.get(
   "/client/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
+    if (req.user.role !== "admin")
+      return res.status(400).json({ msg: "Not admin" });
     User.findById(req.params.id)
       .then((user) => {
         Measurement.findOne({ clientName: req.params.id }).then((item) => {
-
           let output = {
             id: user.id,
             firstName: user.firstName,
@@ -223,11 +230,12 @@ router.post(
   "/supplier",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateSupplierInput(req.body);
-    if (!isValid) {
-      return res.status(400).json(errors);
-    }
-    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
+    // const { errors, isValid } = validateSupplierInput(req.body);
+    // if (!isValid) {
+    //   return res.status(400).json(errors);
+    // }
+    if (req.user.role !== "admin")
+      return res.status(400).json({ msg: "Not admin" });
     let role = "supplier";
 
     User.findOne({ email: req.body.email }).then((user) => {
@@ -263,7 +271,8 @@ router.get(
   "/supplier/:id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
+    if (req.user.role !== "admin")
+      return res.status(400).json({ msg: "Not admin" });
     User.findById(req.params.id)
       .then((user) => {
         Supply.find({ nameOfSupplier: req.params.id }).then((supply) => {
@@ -277,8 +286,12 @@ router.get(
 );
 
 // Protected route, Getting all Users
-router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) => {
-    if (req.user.role !== "admin") return res.status(400).json({ msg: "Not admin" });
+router.get(
+  "/all",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    if (req.user.role !== "admin")
+      return res.status(400).json({ msg: "Not admin" });
     User.find()
       .then((users) => {
         res.json(users);
@@ -290,14 +303,24 @@ router.get("/all", passport.authenticate("jwt", { session: false }), (req, res) 
 );
 
 // findOneAndUpdate()
-router.put("/:userId", passport.authenticate("jwt", { session: false }), (req, res) => {
-    if (req.user.role == !"admin") return res.status(400).json({ msg: "Not admin" });
-    User.findOneAndUpdate({_id: req.params.userId}, req.body, {new: true}, (err, user) => {
+router.put(
+  "/:userId",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    if (req.user.role == !"admin")
+      return res.status(400).json({ msg: "Not admin" });
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      req.body,
+      { new: true },
+      (err, user) => {
         if (err) {
-            return res.status(400).json({ msg: "An error has occured" })
+          return res.status(400).json({ msg: "An error has occurred" });
         }
-        return res.json(user)
-    })
-})
+        return res.json(user);
+      }
+    );
+  }
+);
 
 module.exports = router;
